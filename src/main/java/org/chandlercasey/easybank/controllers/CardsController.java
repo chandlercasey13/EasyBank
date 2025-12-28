@@ -8,7 +8,7 @@ public class CardsController {
 
     @GetMapping("/myCards")
     public String getCardsDetails(){
-        return "Card Details from DB";
+        return "Card Details from DBd";
     }
 }
 
