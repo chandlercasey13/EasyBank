@@ -4,11 +4,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class WelcomeController {
+public class ContactController {
 
-    @GetMapping("/welcome")
-    public String sayWelcome(){
-        return "Spring Application";
+    @GetMapping("/contact")
+    public String saveContactInquiryDetails(){
+        return "Details saved to DB";
     }
 }
 
