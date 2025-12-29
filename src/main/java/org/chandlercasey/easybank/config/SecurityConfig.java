@@ -24,9 +24,11 @@ public class SecurityConfig {
 
         // this will secure all routes
         /*http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll());*/
+        http.csrf(csrfConfig -> csrfConfig.disable());
+
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
-                .requestMatchers("/notices", "/contact", "/error").permitAll());
+                .requestMatchers("/notices", "/contact", "/register","/error").permitAll());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         return http.build();
