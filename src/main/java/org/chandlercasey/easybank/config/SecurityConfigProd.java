@@ -26,7 +26,7 @@ public class SecurityConfigProd {
         http.csrf(csrfConfig -> csrfConfig.disable());
 
         http.authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
+                .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards", "/user").authenticated()
                 .requestMatchers("/notices", "/contact", "/register","/error").permitAll());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
