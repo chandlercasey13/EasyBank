@@ -31,7 +31,6 @@ public class EasyBankUsernamePwdAuthenticationProvider implements Authentication
 
     }
 
-
     @Override
     public boolean supports(Class<?> authentication) {
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
