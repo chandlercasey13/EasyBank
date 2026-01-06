@@ -30,17 +30,17 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Profile("!prod")
 
 public class SecurityConfig {
+//     this is a custom security filter chain that is upcast to type SecurityFilterChain, because of the type, the bean
+//     is picked up and autoconfigured to be used
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        // this will not secure any routes at all
-        /*http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());*/
-
-        // this will secure all routes
-        /*http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll());*/
+    SecurityFilterChain customFilterChain(HttpSecurity http) throws Exception {
+        // configure the HttpSecurity object that needs to be returned
+        // each HttpSecurity method returns HttpSecurity.this, enabling method chaining
         http.csrf(csrfConfig -> csrfConfig.disable())
                 .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class);
         http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        //cors needs a special configurer
          http.cors(corsConfig -> corsConfig.configurationSource(new CorsConfigurationSource() {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
@@ -60,6 +60,8 @@ public class SecurityConfig {
                 .requestMatchers("/notices", "/contact", "/register","/error").permitAll());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
+
+        // return the customized HttpSecurity instance
         return http.build();
     }
 //    @Bean
