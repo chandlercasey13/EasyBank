@@ -23,7 +23,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody Customer customer){
-        try{
+        try{ System.out.println(customer.getMobileNumber());
             String hashPwd = passwordEncoder.encode(customer.getPwd());
             customer.setPwd(hashPwd);
             customer.setCreateDt(new Date(System.currentTimeMillis()));
