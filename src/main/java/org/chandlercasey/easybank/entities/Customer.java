@@ -37,6 +37,7 @@ public class Customer {
 
     //One Customer can have many authorities
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<Authority> authorities;
 
 }

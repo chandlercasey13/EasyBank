@@ -58,9 +58,15 @@ SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Excepti
                     .ignoringRequestMatchers( "/contact","/register")
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+            .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+            .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
             .redirectToHttps((https) -> https.disable()) // Only HTTP
             .authorizeHttpRequests((requests) -> requests
-                    .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards", "/user").authenticated()
+                    .requestMatchers("/myAccount").hasRole("USER")
+                    .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/myLoans").hasRole("USER")
+                    .requestMatchers("/myCards").hasRole("USER")
+                    .requestMatchers("/user").authenticated()
                     .requestMatchers("/notices", "/contact", "/error", "/register", "/invalidSession").permitAll());
     http.formLogin(withDefaults());
     http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));

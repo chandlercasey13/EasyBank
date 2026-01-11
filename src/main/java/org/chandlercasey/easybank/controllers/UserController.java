@@ -1,7 +1,9 @@
 package org.chandlercasey.easybank.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.chandlercasey.easybank.entities.Authority;
 import org.chandlercasey.easybank.entities.Customer;
+import org.chandlercasey.easybank.repositories.AuthorityRepository;
 import org.chandlercasey.easybank.repositories.CustomerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
     private final CustomerRepository customerRepository;
+    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
@@ -28,6 +31,12 @@ public class UserController {
             customer.setPwd(hashPwd);
             customer.setCreateDt(new Date(System.currentTimeMillis()));
             Customer savedCustomer = customerRepository.save(customer);
+
+
+            Authority authority = new Authority();
+            authority.setCustomer(savedCustomer);
+            authority.setName("ROLE_USER");
+            authorityRepository.save(authority);
 
             if(savedCustomer.getId()>0) {
                 return ResponseEntity.status(HttpStatus.CREATED).
