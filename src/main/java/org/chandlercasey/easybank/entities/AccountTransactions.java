@@ -1,12 +1,10 @@
 package org.chandlercasey.easybank.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.smartcardio.Card;
 import java.sql.Date;
 
 @Entity
@@ -42,5 +40,9 @@ public class AccountTransactions {
 
     @Column(name = "create_dt")
     private Date createDt;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "card_id")
+    private Cards card;
 
 }
