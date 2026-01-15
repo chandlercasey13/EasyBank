@@ -30,31 +30,46 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
      * @throws IOException
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
         String jwt = request.getHeader(ApplicationConstants.JWT_HEADER);
-        if(null != jwt) {
+        if (jwt != null) {
             try {
                 Environment env = getEnvironment();
-                if (null != env) {
+                if (env != null) {
                     String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
                             ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
+
                     SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-                    if(null !=secretKey) {
+                    if (secretKey != null) {
+
                         Claims claims = Jwts.parser().verifyWith(secretKey)
                                 .build().parseSignedClaims(jwt).getPayload();
+
                         String username = String.valueOf(claims.get("username"));
                         String authorities = String.valueOf(claims.get("authorities"));
-                        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null,
-                                AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
+                        Long id = ((Number) claims.get("id")).longValue();
+
+                        Authentication authentication =
+                                new UsernamePasswordAuthenticationToken(
+                                        username,
+                                        null,
+                                        AuthorityUtils.commaSeparatedStringToAuthorityList(authorities)
+                                );
+                        ((UsernamePasswordAuthenticationToken) authentication).setDetails(id);
+
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
 
             } catch (Exception exception) {
-                throw new BadCredentialsException("Invalid Token received!");
+                throw new BadCredentialsException("Invalid Token received!", exception);
             }
         }
-        filterChain.doFilter(request,response);
+
+        filterChain.doFilter(request, response);
     }
 
     @Override

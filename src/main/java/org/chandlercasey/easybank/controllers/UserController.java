@@ -3,6 +3,7 @@ package org.chandlercasey.easybank.controllers;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.chandlercasey.easybank.constants.ApplicationConstants;
 import org.chandlercasey.easybank.entities.Authority;
 import org.chandlercasey.easybank.entities.Customer;
@@ -11,12 +12,14 @@ import org.chandlercasey.easybank.entities.LoginResponseDTO;
 import org.chandlercasey.easybank.repositories.AuthorityRepository;
 import org.chandlercasey.easybank.repositories.CustomerRepository;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +34,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
     private final CustomerRepository customerRepository;
     private final AuthorityRepository authorityRepository;
@@ -62,7 +66,10 @@ public class UserController {
             }
 
 
-        }catch (Exception ex){
+        } catch (DataIntegrityViolationException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Email already in use");
+        } catch (Exception ex){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An exception occured" + ex.getMessage());
         }
@@ -77,10 +84,14 @@ public class UserController {
         Authentication authenticationResponse = authenticationManager.authenticate(authentication);
         if(null != authenticationResponse && authenticationResponse.isAuthenticated()) {
             if (null != env) {
+                Customer customer =
+                        customerRepository.findByEmail(loginRequest.username())
+                                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
                 String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
                         ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
                 SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-                jwt = Jwts.builder().issuer("Eazy Bank").subject("JWT Token")
+                jwt = Jwts.builder().issuer("Easy Bank").subject("JWT Token")
+                        .claim("id", customer.getId())
                         .claim("username", authenticationResponse.getName())
                         .claim("authorities", authenticationResponse.getAuthorities().stream().map(
                                 GrantedAuthority::getAuthority).collect(Collectors.joining(",")))

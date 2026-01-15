@@ -16,11 +16,12 @@ import java.util.Set;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
+    @Column(name = "customer_id", unique = true)
     private long id;
 
     private String name;
 
+    @Column(unique = true)
     private String email;
 
     @Column(name = "mobile_number")
