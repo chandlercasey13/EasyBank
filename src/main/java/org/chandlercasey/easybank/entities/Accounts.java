@@ -1,8 +1,6 @@
 package org.chandlercasey.easybank.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,11 +14,13 @@ public class Accounts {
     private long customerId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="account_number")
     private long accountNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="account_type")
-    private String accountType;
+    private AccountTypes accountType;
 
     @Column(name = "branch_address")
     private String branchAddress;
