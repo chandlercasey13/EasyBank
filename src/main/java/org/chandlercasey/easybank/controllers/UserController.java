@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.chandlercasey.easybank.constants.ApplicationConstants;
 import org.chandlercasey.easybank.entities.Authority;
 import org.chandlercasey.easybank.entities.Customer;
-import org.chandlercasey.easybank.entities.LoginRequestDTO;
-import org.chandlercasey.easybank.entities.LoginResponseDTO;
+import org.chandlercasey.easybank.entities.dto.LoginRequest;
+import org.chandlercasey.easybank.entities.dto.LoginResponse;
 import org.chandlercasey.easybank.repositories.AuthorityRepository;
 import org.chandlercasey.easybank.repositories.CustomerRepository;
 import org.springframework.core.env.Environment;
@@ -23,13 +23,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -77,7 +75,7 @@ public class UserController {
     }
 
     @PostMapping("/apiLogin")
-    public ResponseEntity<LoginResponseDTO> apiLogin (@RequestBody LoginRequestDTO loginRequest) {
+    public ResponseEntity<LoginResponse> apiLogin (@RequestBody LoginRequest loginRequest) {
         String jwt = "";
         Authentication authentication = UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.username(),
                 loginRequest.password());
@@ -101,7 +99,7 @@ public class UserController {
             }
         }
         return ResponseEntity.status(HttpStatus.OK).header(ApplicationConstants.JWT_HEADER,jwt)
-                .body(new LoginResponseDTO(HttpStatus.OK.getReasonPhrase(), jwt));
+                .body(new LoginResponse(HttpStatus.OK.getReasonPhrase(), jwt));
     }
 
 

@@ -5,10 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
-public class Accounts {
+@Table(name = "accounts")
+public class Account {
 
     @Column(name = "customer_id")
     private long customerId;
@@ -27,5 +30,9 @@ public class Accounts {
 
     @Column(name = "create_dt")
     private Date createDt;
+
+    @OneToMany(mappedBy = "account")
+    private List<Card> cards = new ArrayList<>();
+
 
 }

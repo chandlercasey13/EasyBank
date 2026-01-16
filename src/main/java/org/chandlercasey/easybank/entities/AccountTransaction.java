@@ -4,14 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.smartcardio.Card;
 import java.sql.Date;
 
 @Entity
 @Getter
 @Setter
 @Table(name="account_transactions")
-public class AccountTransactions {
+public class AccountTransaction {
 
     @Id
     @Column(name = "transaction_id")
@@ -43,6 +42,6 @@ public class AccountTransactions {
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "card_id")
-    private Cards card;
+    private Card card;
 
 }
