@@ -10,6 +10,7 @@ public class EasyBankApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(EasyBankApplication.class, args);
+
     }
 
 }
