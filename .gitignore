@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+certs/
+certs/**
+*.p12
+*.pfx
+*.pem
+*.key
+*.crt
